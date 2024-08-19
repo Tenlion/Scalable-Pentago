@@ -1,5 +1,5 @@
 
-# Developer Name : Kira Ash Stephenson (Solaas Ashen Onslaught)
+# Developer : Kira Ash Stephenson (Solaas Ashen Onslaught)
 # Description : Welcome to Scalable Pentago!  It's Pentago but the board can scale up to 26x26 nodes, there
 #               can be 26 players, the winning sequence can go up to the board's length, and the board has
 #               the ability to split into a number of sub-boards that can be produced with a base of 4.  As
@@ -8,28 +8,22 @@
 #               numbered from top-to-down and left-to-right (starting at 1, not 0); horizontal first, then vertical.
 #               Have fun!
 
-
-class Node:
-    """Nodes are what fill the board.  They hold states that are either empty or assigned to a player.
-    This class can also be used to easily mod the game if they so wish.  To do so, add new properties to this
-    class, define new methods that manipulate those properties inside the ScalablePentago class, and configure
-    the gameplay_loop and gameplay_start methods in the ScalablePentago class to account for modifications."""
-
-    def __init__(self, state):
-        """Creates an instance of a node with the passed state."""
-        self.__state = state
-
-    def get_state(self):
-        """Gets the current state of the node."""
-        return self.__state
-
-    def set_state(self, new_state):
-        """Sets the state to the passed value."""
-        self.__state = new_state
+# Importing the node class so that the board can be filled with nodes.
+import Node
 
 
 class ScalablePentago:
-    """Used to create instances of scalable versions of the game Pentago."""
+    """Used to create instances of a version of Pentago that is scalable.  The logic of methods for this class
+    are ordered.  The order starts with the constructor "__init__" and then jumps to the bottom method of the document
+    called "gameplay_start".  From there, the order is read from the bottom method to the top method.  The exceptions
+    to this, meaning the standalone methods, start from the "sub_board_corner_position" method and continue upward.
+    So, if you wanted to read the program flow, read the constructor and then jump to the bottom method and work your
+    way up.  You might have to jump around a little, but this is only because the gameplay methods utilize a multitude
+    of methods for it's functionality; the reading jumps are always down to up.  Furthermore, the methods are declared
+    as public intentionally for easier usage in case someone wants to copy the code and mess with it for themselves
+    (feel free to design the encapsulation for yourself).  Lastly, since this is Python, I didn't see a reason to
+    complicate the class by splitting the abstract data type and data structure.  I believe Python doesn't require
+    such a thing for efficiency, but I could be wrong; it's been awhile since I've worked in Python."""
 
     def __init__(self):
         """Develops an instance of a Pentago board and properties needed for the game."""
@@ -74,8 +68,105 @@ class ScalablePentago:
             for column in range(self.__board_length):
 
                 # Makes a node with the blank value and appends the node to the current row's values.
-                node = Node(self.__blank)
+                node = Node.Node(self.__blank)
                 self.__board[row].append(node)
+
+    def print_board(self):
+        """Prints out the current contents of the Pentago board."""
+
+        # PART 1 : Print out the x_label, a corner space, and a line to separate the label from the board contents.
+
+        # Printing upper left corner space for the board.
+        print("  " + " ", end='')
+
+        # Printing out the X label of the board that sits on the top.
+        x_counter = 1
+        for character in self.__x_label:
+
+            # Print the column's designator and add a space.
+            print(character + " ", end='')
+
+            # Check if the x_counter is equivalent to the sub_board_length.
+            # If true, reset the x_counter and print an extra space to help split the sub_boards columns.
+            if x_counter == self.__sub_board_length:
+                x_counter = 0
+                print(" ", end='')
+
+            # Accumulate the x_counter by 1 to ensure we're building up to another sub_board split.
+            x_counter += 1
+
+        # This print is to separate the x_label from the board's contents.
+        print()
+
+
+
+        # PART 2 : Print out the board contents and ensure the sub_boards are split from each other.
+
+        # Printing out the Y label of the board and the contents of the Pentago board.
+        y_counter = 1
+        x_counter = 1
+        for row in range(self.__board_length):
+
+            # If the row value is below 10, print a space out before the row identifier is printed.
+            # Otherwise, simply print the row identifier.
+            if row < 10:
+                print(" " + str(row) + " ", end='')
+            else:
+                print(str(row) + " ", end='')
+
+            # Loop out the states of each node in the board and check for sub_board splitting.
+            for column in range(self.__board_length):
+
+                # Print out the current node and follow it with a space.
+                print(self.__board[row][column].get_state() + " ", end='')
+
+                # Check if the x_counter is equivalent to the sub_board_length.
+                # If true, reset the x_counter and print an extra space to help split the sub_board columns.
+                # Afterwards, accumulate the x_counter.
+                if x_counter == self.__sub_board_length:
+                    x_counter = 0
+                    print(" ", end='')
+                x_counter += 1
+
+            # Check if the y_counter is equivalent to the sub_board_length.
+            # If true, reset the y_counter and print an extra line to help split the sub_board rows.
+            # Afterwards, accumulate the y_counter.
+            if y_counter == self.__sub_board_length:
+                y_counter = 0
+                print()
+            y_counter += 1
+
+            # Print is placed here so that the next row of contents is placed on a new line.
+            print()
+
+    def is_board_full(self):
+        """Checking to see if the board is full of marbles.  Will return true if it's full, false otherwise."""
+
+        # Creating a boolean for return; method is looking for a flip to true.
+        board_is_full = False
+
+        # Counting out the number of nodes in the board that have non-defaulted states.
+        counted_nodes = 0
+        for row in range(self.__board_length):
+            for column in range(self.__board_length):
+                if self.__board[row][column].get_state() != self.__blank:
+                    counted_nodes += 1
+
+        # Checking if the counted nodes value is equal to the number of nodes within the board.
+        # If this is true, flip the boolean we made at the start to True.
+        number_of_nodes_in_board = self.__board_length * self.__board_length
+        if counted_nodes == number_of_nodes_in_board:
+            board_is_full = True
+
+        # Return the result of the boolean.
+        return board_is_full
+
+    def sub_board_of_node(self, row, column):
+        """Returns the sub_board number of where a node is currently at."""
+        variable_1 = int(row / self.__sub_board_length) * (self.__board_length / self.__sub_board_length)
+        variable_2 = int(column / self.__sub_board_length)
+
+        return variable_1 + variable_2
 
     def get_board_value_of_letter(self, letter):
         """Returns the integer value of where a letter would be on the board's dimensions."""
@@ -330,170 +421,6 @@ class ScalablePentago:
             print("ERROR : Your input was neither 'c', 'C', 'a', or 'A' for the rotation's direction.")
             return self.obtain_rotation_direction()
 
-    def check_direction(self, direction, row, column, length_to_check, state_of_player):
-        """RECURSIVE METHOD : Returns true if a winning sequence was achieved in the desired direction.
-        Returns false otherwise."""
-
-        # BASE CASE : If the winning length is 0, this means the player won.
-        if length_to_check == 0:
-            return True
-
-        # Switch to dictate which direction logic we will be using to change the row and column values.
-        match direction:
-
-            # North
-            case 0:
-                row -= 1
-
-            # Northeast
-            case 1:
-                row -= 1
-                column += 1
-
-            # East
-            case 2:
-                column += 1
-
-            # Southeast
-            case 3:
-                row += 1
-                column += 1
-
-            # South
-            case 4:
-                row += 1
-
-            # Southwest
-            case 5:
-                row += 1
-                column -= 1
-
-            # West
-            case 6:
-                column -= 1
-
-            # Northwest
-            case 7:
-                row -= 1
-                column -= 1
-            case _:
-                print("Something went wrong with check_direction.")
-
-        # Defining the board limits to prevent boundary errors.
-        board_maximum = self.__board_length - 1
-        board_minimum = 0
-
-        # BASE CASE: Checking if the boundary limits have been crossed.
-        # If so, return false.
-        if (row > board_maximum) or (row < board_minimum):
-            return False
-        if (column > board_maximum) or (column < board_minimum):
-            return False
-
-        # BASE CASE : Checking if the state of the node is blank or does NOT equal the player state.
-        # If either are true, return False as that means the direction is pointless to pursue.
-        state_to_check = self.__board[row][column].get_state()
-        if (state_to_check == self.__blank) or (state_to_check != state_of_player):
-            return False
-
-        # Decrementing the length_to_check by 1 since we've now checked a node.
-        length_to_check -= 1
-
-        # Recur with the new row, column, and length_to_check values.
-        return self.check_direction(direction, row, column, length_to_check, state_of_player)
-
-    def check_for_player_win(self, row, column, winning_list, state_of_node):
-        """Checks the list of players on the current node to see if a winning sequence can be achieved from it.
-        After the check has been made, the winning list will hold true values for the players that won."""
-
-        # Loop to determine how many times win scenarios need to be checked.
-        # This is based on the player count since we need to see if a change to the board has caused any player to win.
-        # Ties are possible, so we have to check every player.
-        for player in range(self.__player_count):
-
-            # Checking if the player state is equal to the state of the node.
-            # If so, proceed to check the directions around the node for a winning sequence.
-            player_state = self.__players[player]
-            if player_state == state_of_node:
-
-                # Loop that checks all 8 directions around a node for a winning sequence.
-                for direction in range(8):
-
-                    # Checking to see if the current player has won in any of the directions.
-                    # If so, break out of this loop and continue to the next player.
-                    if winning_list[player]:
-                        break
-
-                    # Check if the current direction has a winning sequence for the player.
-                    # Then assign the result, whether true or false, to the winning_list.
-                    player_has_won = self.check_direction(direction, row, column, self.__winning_length - 1, player_state)
-                    winning_list[player] = player_has_won
-
-    def get_game_state(self, marble_sub_board, rotated_sub_board):
-        """Returns a list of booleans that is the same size as the players string for the game.  Players who have
-        won will have their corresponding index value set to true inside the list.  As an example, if Player C has won,
-        then index 2 inside the list will be set to true."""
-
-        # Creating a list of booleans set to false that holds a length equivalent to the player count in the game.
-        players_that_won = [False] * self.__player_count
-
-        # Checking if the passed sub_boards are the same.
-        # If they are, we only need to check one of them.  If not, we check both.
-        if marble_sub_board == rotated_sub_board:
-            boards_to_check = [marble_sub_board]
-        else:
-            boards_to_check = [marble_sub_board, rotated_sub_board]
-
-        # Loop that goes through each board to check for a winning condition for every player.
-        for sub_board in range(len(boards_to_check)):
-
-            # Obtaining the upper left corner position of the current sub_board.
-            sub_board_corner = self.sub_board_corner_position(boards_to_check[sub_board])
-            corners_row = int(sub_board_corner[0])
-            corners_column = int(sub_board_corner[1])
-
-            # Nested loop to locate the current node to be checked for a player win.
-            for row in range(self.__sub_board_length):
-                sub_board_row = corners_row + row
-                for column in range(self.__sub_board_length):
-                    sub_board_column = corners_column + column
-
-                    # Check to see if the node is NOT empty.
-                    # If it's not empty, check to see if ANY of the players have won starting at that node.
-                    # If it's empty, move on to the next node.
-                    state_to_check = self.__board[sub_board_row][sub_board_column].get_state()
-                    if state_to_check != self.__blank:
-
-                        # This will alter the contents of the players_that_won variable to indicate which
-                        # players have won in the game.  Those that have won, will have their values set to true
-                        # inside the list.  Player A is index 0, player B is index 1, and so on and so forth.
-                        self.check_for_player_win(sub_board_row, sub_board_column, players_that_won, state_to_check)
-
-        # Returning the list of players who have won.
-        return players_that_won
-
-    def is_board_full(self):
-        """Checking to see if the board is full of marbles.  Will return true if it's full, false otherwise."""
-
-        # Creating a boolean for return; method is looking for a flip to true.
-        board_is_full = False
-
-        # Counting out the number of nodes in the board that have non-defaulted states.
-        counted_nodes = 0
-        for row in range(self.__board_length):
-            for column in range(self.__board_length):
-                if self.__board[row][column].get_state() != self.__blank:
-                    counted_nodes += 1
-
-        # Checking if the counted nodes value is equal to the number of nodes within the board.
-        # If this is true, flip the boolean we made at the start to True.
-        number_of_nodes_in_board = self.__board_length * self.__board_length
-        if counted_nodes == number_of_nodes_in_board:
-            board_is_full = True
-
-        # Return the result of the boolean.
-        return board_is_full
-
     def sub_board_corner_position(self, sub_board):
         """Returns a list containing the upper left corner position of the desired sub-board.
         The first value in the list is the row position.  The second is the column position."""
@@ -659,80 +586,147 @@ class ScalablePentago:
 
                 nodes_in_sequence_to_rotate -= 2
 
-    def print_board(self):
-        """Prints out the current contents of the Pentago board."""
+    def check_direction(self, direction, row, column, length_to_check, state_of_player):
+        """RECURSIVE METHOD : Returns true if a winning sequence was achieved in the desired direction.
+        Returns false otherwise."""
 
-        # PART 1 : Print out the x_label, a corner space, and a line to separate the label from the board contents.
+        # BASE CASE : If the winning length is 0, this means the player won.
+        if length_to_check == 0:
+            return True
 
-        # Printing upper left corner space for the board.
-        print("  " + " ", end='')
+        # Switch to dictate which direction logic we will be using to change the row and column values.
+        match direction:
 
-        # Printing out the X label of the board that sits on the top.
-        x_counter = 1
-        for character in self.__x_label:
+            # North
+            case 0:
+                row -= 1
 
-            # Print the column's designator and add a space.
-            print(character + " ", end='')
+            # Northeast
+            case 1:
+                row -= 1
+                column += 1
 
-            # Check if the x_counter is equivalent to the sub_board_length.
-            # If true, reset the x_counter and print an extra space to help split the sub_boards columns.
-            if x_counter == self.__sub_board_length:
-                x_counter = 0
-                print(" ", end='')
+            # East
+            case 2:
+                column += 1
 
-            # Accumulate the x_counter by 1 to ensure we're building up to another sub_board split.
-            x_counter += 1
+            # Southeast
+            case 3:
+                row += 1
+                column += 1
 
-        # This print is to separate the x_label from the board's contents.
-        print()
+            # South
+            case 4:
+                row += 1
 
+            # Southwest
+            case 5:
+                row += 1
+                column -= 1
 
+            # West
+            case 6:
+                column -= 1
 
-        # PART 2 : Print out the board contents and ensure the sub_boards are split from each other.
+            # Northwest
+            case 7:
+                row -= 1
+                column -= 1
+            case _:
+                print("Something went wrong with check_direction.")
 
-        # Printing out the Y label of the board and the contents of the Pentago board.
-        y_counter = 1
-        x_counter = 1
-        for row in range(self.__board_length):
+        # Defining the board limits to prevent boundary errors.
+        board_maximum = self.__board_length - 1
+        board_minimum = 0
 
-            # If the row value is below 10, print a space out before the row identifier is printed.
-            # Otherwise, simply print the row identifier.
-            if row < 10:
-                print(" " + str(row) + " ", end='')
-            else:
-                print(str(row) + " ", end='')
+        # BASE CASE: Checking if the boundary limits have been crossed.
+        # If so, return false.
+        if (row > board_maximum) or (row < board_minimum):
+            return False
+        if (column > board_maximum) or (column < board_minimum):
+            return False
 
-            # Loop out the states of each node in the board and check for sub_board splitting.
-            for column in range(self.__board_length):
+        # BASE CASE : Checking if the state of the node is blank or does NOT equal the player state.
+        # If either are true, return False as that means the direction is pointless to pursue.
+        state_to_check = self.__board[row][column].get_state()
+        if (state_to_check == self.__blank) or (state_to_check != state_of_player):
+            return False
 
-                # Print out the current node and follow it with a space.
-                print(self.__board[row][column].get_state() + " ", end='')
+        # Decrementing the length_to_check by 1 since we've now checked a node.
+        length_to_check -= 1
 
-                # Check if the x_counter is equivalent to the sub_board_length.
-                # If true, reset the x_counter and print an extra space to help split the sub_board columns.
-                # Afterwards, accumulate the x_counter.
-                if x_counter == self.__sub_board_length:
-                    x_counter = 0
-                    print(" ", end='')
-                x_counter += 1
+        # Recur with the new row, column, and length_to_check values.
+        return self.check_direction(direction, row, column, length_to_check, state_of_player)
 
-            # Check if the y_counter is equivalent to the sub_board_length.
-            # If true, reset the y_counter and print an extra line to help split the sub_board rows.
-            # Afterwards, accumulate the y_counter.
-            if y_counter == self.__sub_board_length:
-                y_counter = 0
-                print()
-            y_counter += 1
+    def check_for_player_win(self, row, column, winning_list, state_of_node):
+        """Checks the list of players on the current node to see if a winning sequence can be achieved from it.
+        After the check has been made, the winning list will hold true values for the players that won."""
 
-            # Print is placed here so that the next row of contents is placed on a new line.
-            print()
+        # Loop to determine how many times win scenarios need to be checked.
+        # This is based on the player count since we need to see if a change to the board has caused any player to win.
+        # Ties are possible, so we have to check every player.
+        for player in range(self.__player_count):
 
-    def sub_board_of_node(self, row, column):
-        """Returns the sub_board number of where a node is currently at."""
-        variable_1 = int(row / self.__sub_board_length) * (self.__board_length / self.__sub_board_length)
-        variable_2 = int(column / self.__sub_board_length)
+            # Checking if the player state is equal to the state of the node.
+            # If so, proceed to check the directions around the node for a winning sequence.
+            player_state = self.__players[player]
+            if player_state == state_of_node:
 
-        return variable_1 + variable_2
+                # Loop that checks all 8 directions around a node for a winning sequence.
+                for direction in range(8):
+
+                    # Checking to see if the current player has won in any of the directions.
+                    # If so, break out of this loop and continue to the next player.
+                    if winning_list[player]:
+                        break
+
+                    # Check if the current direction has a winning sequence for the player.
+                    # Then assign the result, whether true or false, to the winning_list.
+                    player_has_won = self.check_direction(direction, row, column, self.__winning_length - 1, player_state)
+                    winning_list[player] = player_has_won
+
+    def get_game_state(self, marble_sub_board, rotated_sub_board):
+        """Returns a list of booleans that is the same size as the players string for the game.  Players who have
+        won will have their corresponding index value set to true inside the list.  As an example, if Player C has won,
+        then index 2 inside the list will be set to true."""
+
+        # Creating a list of booleans set to false that holds a length equivalent to the player count in the game.
+        players_that_won = [False] * self.__player_count
+
+        # Checking if the passed sub_boards are the same.
+        # If they are, we only need to check one of them.  If not, we check both.
+        if marble_sub_board == rotated_sub_board:
+            boards_to_check = [marble_sub_board]
+        else:
+            boards_to_check = [marble_sub_board, rotated_sub_board]
+
+        # Loop that goes through each board to check for a winning condition for every player.
+        for sub_board in range(len(boards_to_check)):
+
+            # Obtaining the upper left corner position of the current sub_board.
+            sub_board_corner = self.sub_board_corner_position(boards_to_check[sub_board])
+            corners_row = int(sub_board_corner[0])
+            corners_column = int(sub_board_corner[1])
+
+            # Nested loop to locate the current node to be checked for a player win.
+            for row in range(self.__sub_board_length):
+                sub_board_row = corners_row + row
+                for column in range(self.__sub_board_length):
+                    sub_board_column = corners_column + column
+
+                    # Check to see if the node is NOT empty.
+                    # If it's not empty, check to see if ANY of the players have won starting at that node.
+                    # If it's empty, move on to the next node.
+                    state_to_check = self.__board[sub_board_row][sub_board_column].get_state()
+                    if state_to_check != self.__blank:
+
+                        # This will alter the contents of the players_that_won variable to indicate which
+                        # players have won in the game.  Those that have won, will have their values set to true
+                        # inside the list.  Player A is index 0, player B is index 1, and so on and so forth.
+                        self.check_for_player_win(sub_board_row, sub_board_column, players_that_won, state_to_check)
+
+        # Returning the list of players who have won.
+        return players_that_won
 
     def gameplay_loop(self, player, marbled_board, rotated_board):
         """RECURSIVE METHOD : Will only return if there is at least one winner or the board is full.  The return
