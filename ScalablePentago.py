@@ -320,6 +320,7 @@ class ScalablePentago:
         for character in list_of_acceptabilities:
             if character == rotation_direction:
                 found_acceptability = True
+                break
 
         # BASE CASE : If an acceptability was found, return the rotation_direction.
         # Otherwise, recur the method and ask for new input.
@@ -340,23 +341,38 @@ class ScalablePentago:
         # Switch to dictate which direction logic we will be using to change the row and column values.
         match direction:
 
+            # North
             case 0:
                 row -= 1
+
+            # Northeast
             case 1:
                 row -= 1
                 column += 1
+
+            # East
             case 2:
                 column += 1
+
+            # Southeast
             case 3:
                 row += 1
                 column += 1
+
+            # South
             case 4:
                 row += 1
+
+            # Southwest
             case 5:
                 row += 1
                 column -= 1
+
+            # West
             case 6:
                 column -= 1
+
+            # Northwest
             case 7:
                 row -= 1
                 column -= 1
@@ -553,8 +569,7 @@ class ScalablePentago:
 
                     # Calculating the two movements that are associated with the set of 4 nodes that will be rotated.
                         # Move 1 is calculated by getting the number of nodes that are left in a square's side to be
-                        # rotated.  This number's starting value increases as we go through each square (the row); I
-                        # have no idea why though, I tried figuring it out and my brain fried.
+                        # rotated.  This number's starting value increases as we go through each square (the row).
                         # Move 2 is calculated by taking the total movement (nodes_in_sequence_to_rotate) and
                         # subracting it from Move 1.  Both moves operate as boundary checkers.
                     move_1 = ((corners_column + nodes_in_sequence_to_rotate) - node_column) + row
