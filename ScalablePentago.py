@@ -21,9 +21,7 @@ class ScalablePentago:
     way up.  You might have to jump around a little, but this is only because the gameplay methods utilize a multitude
     of methods for it's functionality; the reading jumps are always down to up.  Furthermore, the methods are declared
     as public intentionally for easier usage in case someone wants to copy the code and mess with it for themselves
-    (feel free to design the encapsulation for yourself).  Lastly, since this is Python, I didn't see a reason to
-    complicate the class by splitting the abstract data type and data structure.  I believe Python doesn't require
-    such a thing for efficiency, but I could be wrong; it's been awhile since I've worked in Python."""
+    (feel free to design the encapsulation for yourself)."""
 
     def __init__(self):
         """Develops an instance of a Pentago board and properties needed for the game."""
@@ -469,7 +467,7 @@ class ScalablePentago:
         # for each iteration because as we go down the rows, there will be fewer nodes in a row to rotate.
         # This always starts out as the sub_board's length minus 1 since the first node replaces the ending
         # node present in a lateral sequence.
-        nodes_in_sequence_to_rotate = int(self.__sub_board_length - 1)
+        nodes_in_sequence_to_rotate = self.__sub_board_length - 1
 
         # Determines how many rows we'll be going through inside the sub_board for rotation.  We don't need to
         # go through all of them since the rotation aspect will deal with half of them.  However, we do need a
@@ -746,7 +744,7 @@ class ScalablePentago:
         rotation_direction = self.obtain_rotation_direction()
 
         # Placing the marble onto the desired position and rotating the chosen sub_board in the specified direction.
-        self.__board[row_and_column[0]][row_and_column[1]].set_state(self.__players[0])
+        self.__board[row_and_column[0]][row_and_column[1]].set_state(self.__players[player])
         self.rotate(board_to_rotate, rotation_direction)
 
         # Calculating the sub_board that the marble was placed in.
@@ -809,3 +807,22 @@ class ScalablePentago:
 
         # Start the gameplay loop using the next player.
         self.gameplay_loop(1, sub_board_of_marble, board_to_rotate)
+
+
+# Running the game if this script is the file that's designated as "main";
+# run this file and __name__ will equal to "main".
+if __name__ == "__main__":
+
+    # Explaining the game.
+    print("Welcome to Scalable Pentago!  It's Pentago but the board can scale up to 26x26 nodes, there" + '\n' +
+          "can be 26 players, the winning sequence can go up to the board's length, and the board has" + '\n' +
+          "the ability to split into a number of sub-boards that can be produced with a base of 4.  As" + '\n' +
+          "for rules, please follow any directions given for inputs; read carefully.  A good GENERAL" + '\n' +
+          "rule is to ensure your inputs are an integer value above 0.  In addition, the sub-boards are" + '\n' +
+          "numbered from top-to-down and left-to-right (starting at 1, not 0); horizontal first, then vertical.  Have fun!")
+    print('\n' + "Press ENTER to define your game's board.")
+    input()
+
+    # Making the game.
+    game = ScalablePentago()
+    game.gameplay_start()
