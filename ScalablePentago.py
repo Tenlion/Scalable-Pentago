@@ -28,17 +28,21 @@ class ScalablePentago:
 
         # Obtaining the sub_board length.
         self.__sub_board_length = self.obtain_sub_board_length()
+        print()
 
         # Obtaining the sub_board_number and board_length.
         number_and_length = self.obtain_subnumber_and_boardlength()
         self.__sub_board_number = number_and_length[0]
         self.__board_length = number_and_length[1]
+        print()
 
         # Obtaining the length required to win the game.
         self.__winning_length = self.obtain_winning_length()
+        print()
 
         # Obtaining the player count.
         self.__player_count = self.obtain_player_count()
+        print()
 
         # Creating a string to dictate the number of players and their identity in the game.
         # Filling the player string with lettered values by converting the ASCII values to characters
@@ -192,13 +196,13 @@ class ScalablePentago:
         try:
             length_of_sub_board = int(input())
         except ValueError:
-            print("ERROR : Please input an integer value.")
+            print('\n' + "ERROR : Please input an integer value.")
             return self.obtain_sub_board_length()
 
         # Check if the sub_board_length is of a lower value than 1.
         # If true, send out an error explaining what's wrong and recur.
         if length_of_sub_board < 2:
-            print("ERROR : Please input a number that is greater than 1 for your sub-board length.")
+            print('\n' + "ERROR : Please input a number that is greater than 1 for your sub-board length.")
             return self.obtain_sub_board_length()
 
         # BASE CASE : If the above check was false, return the length of the sub-board.
@@ -209,7 +213,7 @@ class ScalablePentago:
         for the sub-board power is deemed acceptable."""
 
         # Printing out a question for the user to answer.
-        print('\n' + "The number of sub-boards in this version of Pentago is 4 to the power of X." + '\n' +
+        print("The number of sub-boards in this version of Pentago is 4 to the power of X." + '\n' +
               "If X were 1, then 4 sub-boards are made; a value of 2 would equate to 16 sub-boards." + '\n' +
               "The number must be greater than 0 and can't push the sides of the game board over 26." + '\n' +
               "To determine the game board's length, use this formula: sub_board_length * sqrt(4^X)" + '\n' +
@@ -220,7 +224,7 @@ class ScalablePentago:
         try:
             sub_board_power = int(input())
         except ValueError:
-            print("ERROR : Please input an integer value.")
+            print('\n' + "ERROR : Please input an integer value.")
             return self.obtain_subnumber_and_boardlength()
 
         # Calculating the game board's length using the number of sub-boards and the sub-board length.
@@ -232,12 +236,12 @@ class ScalablePentago:
 
         # SUB-BOARD POWER CHECK : Check if the inputted X is greater than 0.
         if sub_board_power < 1:
-            print("ERROR : Your X power is not greater than 0.")
+            print('\n' + "ERROR : Your X power is not greater than 0.")
             return self.obtain_subnumber_and_boardlength()
 
         # LENGTH OF BOARD CHECK : Check if the board length is greater than 100.
         if length_of_board > 26:
-            print("ERROR : Your board length is too large." + '\n' +
+            print('\n' + "ERROR : Your board length is too large." + '\n' +
                   "Your Board Length : " + str(length_of_board))
             return self.obtain_subnumber_and_boardlength()
 
@@ -250,7 +254,7 @@ class ScalablePentago:
         If it's not, the method will recur and ask for new input."""
 
         # Printing out a question for the user to answer.
-        print('\n' + "How many nodes in a row will equate to a win in your game?" + '\n' +
+        print("How many nodes in a row will equate to a win in your game?" + '\n' +
               "The winning length can't be greater than the board length and can't be lower than 2." + '\n' +
               "Your board length, which is calculated by sub_board_length * sqrt(4^X), is: " + str(self.__board_length))
 
@@ -259,7 +263,7 @@ class ScalablePentago:
         try:
             length_to_win = int(input())
         except ValueError:
-            print("ERROR : Please input an integer value.")
+            print('\n' + "ERROR : Please input an integer value.")
             return self.obtain_winning_length()
 
         # The below checks determine if the input received was an acceptable value.
@@ -267,12 +271,12 @@ class ScalablePentago:
 
         # 1st WINNING LENGTH CHECK : Check if the winning length is greater than the board length.
         if length_to_win > self.__board_length:
-            print("ERROR : Your winning length is greater than the board's length.  That's not feasible.")
+            print('\n' + "ERROR : Your winning length is greater than the board's length.  That's not feasible.")
             return self.obtain_winning_length()
 
         # 2nd WINNING LENGTH CHECK : Check if the winning length is lower than 2.
         if length_to_win < 2:
-            print("ERROR : Your winning length is too short.  Values lower than 2 are not acceptable.")
+            print('\n' + "ERROR : Your winning length is too short.  Values lower than 2 are not acceptable.")
             return self.obtain_winning_length()
 
         # BASE CASE : If the above checks equate false, return length_to_win.
@@ -287,7 +291,7 @@ class ScalablePentago:
         player_maximum = int(nodes_in_board / self.__winning_length)
 
         # Printing out a question for the user to answer.
-        print('\n' + "How many players will be playing?" + '\n' +
+        print("How many players will be playing?" + '\n' +
               "Player count must be greater than 1, lower than your game's player maximum, and lower than 27." + '\n' +
               "The nodes in the board is the board length multiplied by itself." + '\n' +
               "The player maximum is the nodes in the board divided by the winning length (truncated)." + '\n' +
@@ -300,7 +304,7 @@ class ScalablePentago:
         try:
             number_of_players = int(input())
         except ValueError:
-            print("ERROR : Please input an integer value.")
+            print('\n' + "ERROR : Please input an integer value.")
             return self.obtain_player_count()
 
         # The below checks determine if the input received was an acceptable value.
@@ -308,17 +312,17 @@ class ScalablePentago:
 
         # 1st PLAYER COUNT CHECK : Check if the number of players is lower than 2.
         if number_of_players < 2:
-            print("ERROR : The player count is too low.  The player count can NOT be lower than 2.")
+            print('\n' + "ERROR : The player count is too low.  The player count can NOT be lower than 2.")
             return self.obtain_player_count()
 
         # 2nd PLAYER COUNT CHECK : Check if the number of players is higher than 26.
         if number_of_players > 26:
-            print("ERROR : The player count is too high.  The player count can NOT be higher than 26.")
+            print('\n' + "ERROR : The player count is too high.  The player count can NOT be higher than 26.")
             return self.obtain_player_count()
 
         # 3rd PLAYER COUNT CHECK : Check if the number of players is greater than the player maximum.
         if number_of_players > player_maximum:
-            print("ERROR : Your player count is too high.  The player count can NOT be higher than the total number of nodes in" + '\n' +
+            print('\n' + "ERROR : Your player count is too high.  The player count can NOT be higher than the total number of nodes in" + '\n' +
                   "the board divided by the winning length.  If it is, it's impossible for any player to conceivably win" + '\n' +
                   "before the board fills up since players HAVE to place marbles down on their turn.")
             return self.obtain_player_count()
@@ -337,12 +341,12 @@ class ScalablePentago:
             print("Row of Marble Position : ", end='')
             row_of_marble = int(input())
         except ValueError:
-            print("ERROR : Please input an integer value.")
+            print('\n' + "ERROR : Please input an integer value.")
             return self.obtain_row_and_column()
 
         # ROW CHECK : Checking if the row input is within the board's length.
         if (row_of_marble < 0) or (row_of_marble > self.__board_length - 1):
-            print("ERROR : Your input for row is not within the board's boundaries.")
+            print('\n' + "ERROR : Your input for row is not within the board's boundaries.")
             return self.obtain_row_and_column()
 
         # Obtaining column input.
@@ -351,18 +355,18 @@ class ScalablePentago:
 
         # 1st COLUMN CHECK : Checking if the column is an english letter.
         if not col_of_marble.isalpha():
-            print("ERROR : Your input for column is not alphanumeric.  Please input a letter.")
+            print('\n' + "ERROR : Your input for column is not alphanumeric.  Please input a letter.")
             return self.obtain_row_and_column()
 
         # 2nd COLUMN CHECK : Checking if the column input is within the board's length.
         col_of_marble = self.get_board_value_of_letter(col_of_marble)
         if (col_of_marble < 0) or (col_of_marble > self.__board_length - 1):
-            print("ERROR : Your input for column is not within the board's boundaries.")
+            print('\n' + "ERROR : Your input for column is not within the board's boundaries.")
             return self.obtain_row_and_column()
 
         # POSITION CHECK : Checking if the specified position is filled already.
         if self.__board[row_of_marble][col_of_marble].get_state() != self.__blank:
-            print("ERROR : The position is already filled.  Please select a new position.")
+            print('\n' + "ERROR : The position is already filled.  Please select a new position.")
             return self.obtain_row_and_column()
 
         # BASE CASE : If the above checks equate false, return the row and column values as a list.
@@ -378,13 +382,13 @@ class ScalablePentago:
             print("Sub-Board to Rotate : ", end='')
             board_to_rotate = int(input())
         except ValueError:
-            print("ERROR : Please input an integer value.")
+            print('\n' + "ERROR : Please input an integer value.")
             return self.obtain_sub_board()
 
         # Checking if the chosen board exists or not.
         # If the board doesn't exist, recur and explain that the input was not acceptable.
         if (board_to_rotate < 1) or (board_to_rotate > self.__sub_board_number):
-            print("ERROR : The sub-board value must be greater than 0 and less than " + str(self.__sub_board_number) + ".")
+            print('\n' + "ERROR : The sub-board value must be greater than 0 and less than " + str(self.__sub_board_number) + ".")
             return self.obtain_sub_board()
 
         # BASE CASE : If the above check equates false, return board_to_rotate.
@@ -395,7 +399,7 @@ class ScalablePentago:
         of an acceptable value."""
 
         # Printing a question for the player to answer.
-        print("Clockwise or Counter Clockwise? Input 'C' for clockwise and 'A' for counter clockwise.", end='')
+        print("Clockwise or Counter Clockwise? Input 'C' for clockwise and 'A' for counter clockwise. ", end='')
 
         # Obtaining input from the player.
         rotation_direction = input()
@@ -742,6 +746,7 @@ class ScalablePentago:
         row_and_column = self.obtain_row_and_column()
         board_to_rotate = self.obtain_sub_board()
         rotation_direction = self.obtain_rotation_direction()
+        print()
 
         # Placing the marble onto the desired position and rotating the chosen sub_board in the specified direction.
         self.__board[row_and_column[0]][row_and_column[1]].set_state(self.__players[player])
@@ -797,6 +802,7 @@ class ScalablePentago:
         row_and_column = self.obtain_row_and_column()
         board_to_rotate = self.obtain_sub_board()
         rotation_direction = self.obtain_rotation_direction()
+        print()
 
         # Placing the marble onto the desired position and rotating the chosen sub_board in the specified direction.
         self.__board[row_and_column[0]][row_and_column[1]].set_state(self.__players[0])
